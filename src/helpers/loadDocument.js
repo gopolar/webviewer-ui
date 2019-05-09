@@ -85,7 +85,10 @@ const getPartRetriever = (state, streaming, dispatch) => {
     filename = createFakeFilename(initialDoc, ext);
   }
 
-  return new Promise(resolve => {
+  const getRetriever = window.CoreControls.PartRetrievers.getPartRetriever;
+  const TYPES = window.CoreControls.PartRetrievers.TYPES;
+
+  return new Promise(async resolve => {
     let partRetriever;
     let partRetrieverName = '';
     if (engineType === engineTypes.PDFNETJS) {
@@ -95,10 +98,10 @@ const getPartRetriever = (state, streaming, dispatch) => {
         partRetriever = pdfDoc;
       } else if (file) {
         partRetrieverName = 'LocalPdfPartRetriever';
-        partRetriever = new window.CoreControls.PartRetrievers.LocalPdfPartRetriever(file);
+        partRetriever = await getRetriever(TYPES.LocalPdfPartRetriever, file);
       } else {
         partRetrieverName = 'ExternalPdfPartRetriever';
-        partRetriever = new window.CoreControls.PartRetrievers.ExternalPdfPartRetriever(documentPath, { useDownloader, withCredentials, filename });
+        partRetriever = await getRetriever(TYPES.ExternalPdfPartRetriever, documentPath, { useDownloader, withCredentials, filename });
       }
     } else if (engineType === engineTypes.PDFTRON_SERVER) {
       partRetrieverName = 'BlackBoxPartRetriever';
@@ -118,11 +121,10 @@ const getPartRetriever = (state, streaming, dispatch) => {
           extension: file.name.split('.').pop()
         };
         blackboxOptions.filename = file.name;
-
+        blackboxOptions.serverRoot = pdftronServer;
         dispatch(actions.setIsUploading(true)); // this is reset in onDocumentLoaded event
       }
-
-      partRetriever = new window.CoreControls.PartRetrievers.BlackBoxPartRetriever(documentPath, pdftronServer, blackboxOptions);
+      partRetriever = await getRetriever(TYPES.BlackBoxPartRetriever, documentPath, { serverOptions: blackboxOptions });
       if (needsUpload) {
         partRetriever._isBlackboxLocalFile = true;
       }
@@ -131,31 +133,32 @@ const getPartRetriever = (state, streaming, dispatch) => {
 
       if (file) {
         partRetrieverName = 'LocalPartRetriever';
-        partRetriever = new window.CoreControls.PartRetrievers.LocalPartRetriever(file, decrypt, decryptOptions);
+        partRetriever = await getRetriever(TYPES.LocalPartRetriever, file, { decrypt, decryptOptions });
       } else if (isOffline) {
-        partRetrieverName = 'WebDBPartRetriever';
-        partRetriever = new window.CoreControls.PartRetrievers.WebDBPartRetriever(null, decrypt, decryptOptions);
+        // // partRetrieverName = 'WebDBPartRetriever';
+        // partRetriever = await getRetriever(TYPES.LocalPartRetriever, file, { decrypt, decryptOptions });
+        // partRetriever = new window.CoreControls.PartRetrievers.WebDBPartRetriever(null, decrypt, decryptOptions);
       } else if (window.utils.windowsApp) {
         partRetrieverName = 'WinRTPartRetriever';
-        partRetriever = new window.CoreControls.PartRetrievers.WinRTPartRetriever(documentPath, cache, decrypt, decryptOptions);
+        partRetriever = await getRetriever(TYPES.WinRTPartRetriever, documentPath, { cacheHint: cache, decrypt, decryptOptions });
       } else if (documentPath && documentPath.indexOf('iosrange://') === 0) {
         partRetrieverName = 'IOSPartRetriever';
-        partRetriever = new window.CoreControls.PartRetrievers.IOSPartRetriever(documentPath, cache, decrypt, decryptOptions);
+        partRetriever = await getRetriever(TYPES.IOSPartRetriever, documentPath, { cacheHint: cache, decrypt, decryptOptions });
       } else if (documentPath && documentPath.indexOf('content://') === 0) {
         partRetrieverName = 'AndroidContentPartRetriever';
-        partRetriever = new window.CoreControls.PartRetrievers.AndroidContentPartRetriever(documentPath, cache, decrypt, decryptOptions);
+        partRetriever = await getRetriever(TYPES.AndroidContentPartRetriever, documentPath, { cacheHint: cache, decrypt, decryptOptions });
       } else if (externalPath) {
         partRetrieverName = 'ExternalHttpPartRetriever';
-        partRetriever = new window.CoreControls.PartRetrievers.ExternalHttpPartRetriever(null, externalPath);
+        partRetriever = await getRetriever(TYPES.ExternalHttpPartRetriever, externalPath);
       } else if (streaming) {
         partRetrieverName = 'StreamingPartRetriever';
-        partRetriever = new window.CoreControls.PartRetrievers.StreamingPartRetriever(documentPath, cache, decrypt, decryptOptions);
+        partRetriever = await getRetriever(TYPES.StreamingPartRetriever, documentPath, { cacheHint: cache, decrypt, decryptOptions });
       } else if (azureWorkaround) {
         partRetrieverName = 'AzurePartRetriever';
-        partRetriever = new window.CoreControls.PartRetrievers.AzurePartRetriever(documentPath, cache, decrypt, decryptOptions);
+        partRetriever = await getRetriever(TYPES.AzurePartRetriever, documentPath, { cacheHint: cache, decrypt, decryptOptions });
       } else {
         partRetrieverName = 'HttpPartRetriever';
-        partRetriever = new window.CoreControls.PartRetrievers.HttpPartRetriever(documentPath, cache, decrypt, decryptOptions);
+        partRetriever = await getRetriever(TYPES.HttpPartRetriever, documentPath, { cacheHint: cache, decrypt, decryptOptions });
       }
     }
 
