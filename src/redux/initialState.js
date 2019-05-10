@@ -194,7 +194,9 @@ export default {
     documentLoadingProgress: 0,
     workerLoadingProgress: 0,
     isUploading: false,
-    uploadProgress: 0
+    uploadProgress: 0,
+    shareId: '',
+    loadCallback: () => {}
   },
   user: {
     name: getHashParams('user', 'Guest'),

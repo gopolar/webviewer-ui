@@ -165,3 +165,7 @@ export const setNoResult = noResult => ({ type: 'SET_NO_RESULT', payload: { noRe
 export const resetSearch = () => ({ type: 'RESET_SEARCH', payload: { } });
 export const setIsProgrammaticSearch = isProgrammaticSearch => ({ type: 'SET_IS_PROG_SEARCH', payload: { isProgrammaticSearch } });
 export const setIsProgrammaticSearchFull = isProgrammaticSearchFull => ({ type: 'SET_IS_PROG_SEARCH_FULL', payload: { isProgrammaticSearchFull } });
+
+// blackbox specific
+export const setLoadCallback = loadCallback => ({ type: 'SET_LOAD_CALLBACK', payload: { loadCallback } });
+export const setShareId = shareId => ({ type: 'SET_SHARE_ID', payload: { shareId } });

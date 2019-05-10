@@ -74,7 +74,7 @@ const checkByteRange = state => {
 };
 
 const getPartRetriever = (state, streaming, dispatch) => {
-  const { path, initialDoc, file, isOffline, pdfDoc, ext } = state.document;
+  const { path, initialDoc, file, isOffline, pdfDoc, ext, shareId, loadCallback } = state.document;
   let { filename } = state.document;
   const { azureWorkaround, customHeaders, decrypt, decryptOptions, externalPath, pdftronServer, disableWebsockets, useDownloader, withCredentials } = state.advanced;
   let documentPath = path || initialDoc;
@@ -105,13 +105,15 @@ const getPartRetriever = (state, streaming, dispatch) => {
 
       const blackboxOptions = { disableWebsockets };
       const needsUpload = file && file.name;
+      const needsDocObject = loadCallback && !needsUpload;
 
       // If PDFTron server is set and they try and upload a local file
       if (needsUpload) {
+        console.log("HIT2");
         documentPath = null; // (BlackBoxPartRetriever does upload when this is null)
         blackboxOptions.uploadData = {
           fileHandle: file,
-          loadCallback: () => {},
+          loadCallback: loadCallback,
           onProgress: e => {
             dispatch(actions.setUploadProgress(e.loaded / e.total));
           },
@@ -120,6 +122,15 @@ const getPartRetriever = (state, streaming, dispatch) => {
         blackboxOptions.filename = file.name;
 
         dispatch(actions.setIsUploading(true)); // this is reset in onDocumentLoaded event
+      }
+
+      if (needsDocObject) {
+        blackboxOptions.uriData = {
+          shareId: shareId,
+          loadCallback: loadCallback,
+          extension: ext,
+        };
+        blackboxOptions.filename = filename;
       }
 
       partRetriever = new window.CoreControls.PartRetrievers.BlackBoxPartRetriever(documentPath, pdftronServer, blackboxOptions);

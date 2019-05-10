@@ -30,7 +30,9 @@ export default store => (documentPath, options = {}) => {
     decryptOptions = {},
     customHeaders = {},
     withCredentials = false,
-    password = ''
+    password = '',
+    shareId = '',
+    loadCallback = () => {},
   } = options;
 
   store.dispatch(actions.setDocumentId(documentId));
@@ -42,6 +44,8 @@ export default store => (documentPath, options = {}) => {
   store.dispatch(actions.setCustomHeaders(customHeaders));
   store.dispatch(actions.setWithCredentials(withCredentials));
   store.dispatch(actions.setPassword(password));
+  store.dispatch(actions.setShareId(shareId));
+  store.dispatch(actions.setLoadCallback(loadCallback));
 
   if (window.CoreControls.isFullPDFEnabled() && documentPath instanceof window.PDFNet.PDFDoc) {
     store.dispatch(actions.setPDFDoc(documentPath));
