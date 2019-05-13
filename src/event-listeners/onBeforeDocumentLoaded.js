@@ -11,10 +11,8 @@ export default dispatch => () => {
   const totalPages = core.getTotalPages();
 
   if (isIOS) {
-    window.CoreControls.SetCachingLevel(2);
-    window.CoreControls.SetPreRenderLevel(0);
-    core.setDisplayMode(window.CoreControls.DisplayModes.Single);
-    dispatch(actions.disableElements([ 'pageTransitionButtons' ]));
+    window.CoreControls.SetCachingLevel(8);
+    window.CoreControls.SetPreRenderLevel(2);
   } else if (totalPages > 500) {
     core.setDisplayMode(window.CoreControls.DisplayModes.Single);
   }
