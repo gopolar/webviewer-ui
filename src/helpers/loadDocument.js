@@ -135,9 +135,8 @@ const getPartRetriever = (state, streaming, dispatch) => {
         partRetrieverName = 'LocalPartRetriever';
         partRetriever = await getRetriever(TYPES.LocalPartRetriever, file, { decrypt, decryptOptions });
       } else if (isOffline) {
-        // // partRetrieverName = 'WebDBPartRetriever';
-        // partRetriever = await getRetriever(TYPES.LocalPartRetriever, file, { decrypt, decryptOptions });
-        // partRetriever = new window.CoreControls.PartRetrievers.WebDBPartRetriever(null, decrypt, decryptOptions);
+        partRetrieverName = 'WebDBPartRetriever';
+        partRetriever = await getRetriever(TYPES.WebDBPartRetriever, null, { decrypt, decryptOptions });
       } else if (window.utils.windowsApp) {
         partRetrieverName = 'WinRTPartRetriever';
         partRetriever = await getRetriever(TYPES.WinRTPartRetriever, documentPath, { cacheHint: cache, decrypt, decryptOptions });
