@@ -105,15 +105,15 @@ const getPartRetriever = (state, streaming, dispatch) => {
 
       const blackboxOptions = { disableWebsockets };
       const needsUpload = file && file.name;
-      const needsDocObject = loadCallback && !needsUpload;
+
+      const isCollabDocument = shareId && !needsUpload;
 
       // If PDFTron server is set and they try and upload a local file
       if (needsUpload) {
-        console.log("HIT2");
         documentPath = null; // (BlackBoxPartRetriever does upload when this is null)
         blackboxOptions.uploadData = {
           fileHandle: file,
-          loadCallback: loadCallback,
+          loadCallback,
           onProgress: e => {
             dispatch(actions.setUploadProgress(e.loaded / e.total));
           },
@@ -124,10 +124,11 @@ const getPartRetriever = (state, streaming, dispatch) => {
         dispatch(actions.setIsUploading(true)); // this is reset in onDocumentLoaded event
       }
 
-      if (needsDocObject) {
+      // If they provide a shareId to open
+      if (isCollabDocument) {
         blackboxOptions.uriData = {
-          shareId: shareId,
-          loadCallback: loadCallback,
+          shareId,
+          loadCallback,
           extension: ext,
         };
         blackboxOptions.filename = filename;
