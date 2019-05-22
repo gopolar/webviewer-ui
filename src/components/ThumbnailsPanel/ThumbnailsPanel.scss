@@ -1,14 +1,14 @@
-@import '../../constants/panel';
+@import '../../constants/styles';
 
 .ThumbnailsPanel {
-  padding: 8px 0px;
+  top: $top-bar-height;
+  height: 180px;
+  min-width: 100%;
+  overflow: auto;
+  transition: margin-left .3s ease;
 
-  .thumbs {
-    display: flex;
-    justify-content: center;
-  }
-
-  .row {
-    display: flex;
+  &.left-panel {
+    width: calc(100% - #{$left-panel-width});
+    margin-left: $left-panel-width;
   }
 }

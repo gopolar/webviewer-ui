@@ -1,11 +1,7 @@
 @import '../../constants/styles';
 
 .Thumbnail {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 180px;
+  display: inline-block;
   height: 180px;
   font-size: 12px;
   text-align: center;

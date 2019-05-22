@@ -14,7 +14,7 @@ class ThumbnailsPanel extends React.PureComponent {
   static propTypes = {
     isDisabled: PropTypes.bool,
     totalPages: PropTypes.number,
-    display: PropTypes.string.isRequired,
+    isLeftPanelOpen: PropTypes.bool
   }
 
   constructor() {
@@ -22,7 +22,6 @@ class ThumbnailsPanel extends React.PureComponent {
     this.pendingThumbs = [];
     this.thumbs = [];
     this.state = {
-      numberOfColumns: this.getNumberOfColumns(),
       canLoad: true
     };
   }
@@ -67,31 +66,6 @@ class ThumbnailsPanel extends React.PureComponent {
 
       this.updateAnnotations(pageIndex);
     });
-  }
-
-  onWindowResize = () => {
-    this.setState({
-      numberOfColumns: this.getNumberOfColumns()
-    });
-  }
-
-  getNumberOfColumns = () => {
-    const thumbnailContainerSize = 180;
-    const desktopBreakPoint = 640;
-    const { innerWidth } = window;
-    let numberOfColumns;
-
-    if (innerWidth >= desktopBreakPoint) {
-      numberOfColumns = 1;
-    } else if (innerWidth >= 3 * thumbnailContainerSize) {
-      numberOfColumns = 3;
-    } else if (innerWidth >= 2 * thumbnailContainerSize) {
-      numberOfColumns = 2;
-    } else {
-      numberOfColumns = 1;
-    }
-
-    return numberOfColumns;
   }
 
   updateAnnotations = pageIndex => {
@@ -233,54 +207,50 @@ class ThumbnailsPanel extends React.PureComponent {
     this.thumbs[pageIndex] = null;
   }
 
-  renderThumbnails = rowIndex => {
-    const { numberOfColumns, canLoad } = this.state;
+  renderThumbnails = index => {
+    const { canLoad } = this.state;
     const { thumbs } = this;
+    const updateHandler = thumbs && thumbs[index] ? thumbs[index].updateAnnotationHandler : null;
 
     return (
-      <div className="row" key={rowIndex}>
-        {
-          new Array(numberOfColumns).fill().map((_, columnIndex) => {
-            const index = rowIndex * numberOfColumns + columnIndex;
-            const updateHandler = thumbs && thumbs[index] ? thumbs[index].updateAnnotationHandler : null;
-
-            return (
-              index < this.props.totalPages 
-              ? <Thumbnail
-                  key={index}
-                  index={index}
-                  canLoad={canLoad}
-                  onLoad={this.onLoad}
-                  onCancel={this.onCancel}
-                  onRemove={this.onRemove}
-                  updateAnnotations={updateHandler}
-                />
-              : null
-            );
-          })
-        }
-      </div>
+      // <div style={{ height: 150, width: 150, background: 'red', display: 'inline-block' }}>{index}</div>
+      <Thumbnail
+        key={index}
+        index={index}
+        canLoad={canLoad}
+        onLoad={this.onLoad}
+        onCancel={this.onCancel}
+        onRemove={this.onRemove}
+        updateAnnotations={updateHandler}
+      />
     );
   }
 
   render() {
-    const { isDisabled, totalPages, display } = this.props;
+    const { 
+      isDisabled, 
+      totalPages, 
+      isLeftPanelOpen
+    } = this.props;
+    const className = [
+      'ThumbnailsPanel',
+      isLeftPanelOpen ? 'left-panel' : '',
+    ].join(' ').trim();
 
     if (isDisabled) {
       return null;
     }
 
     return (
-      <div className="Panel ThumbnailsPanel" style={{ display }} data-element="thumbnailsPanel">
-        <div className="thumbs">
-          <ReactList
-            key="panel"
-            itemRenderer={this.renderThumbnails}
-            length={totalPages / this.state.numberOfColumns}
-            type="uniform"
-            useStaticSize
-          />
-        </div>
+      <div className={className} data-element="thumbnailsPanel">
+        <ReactList
+          key="panel"
+          itemRenderer={this.renderThumbnails}
+          length={totalPages}
+          type="uniform"
+          axis="x"
+          useStaticSize
+        />
       </div>
     );
   }
@@ -289,6 +259,7 @@ class ThumbnailsPanel extends React.PureComponent {
 const mapStateToProps = state => ({
   isDisabled: selectors.isElementDisabled(state, 'thumbnailsPanel'),
   totalPages: selectors.getTotalPages(state),
+  isLeftPanelOpen: selectors.isElementOpen(state, 'leftPanel')
 });
 
 export default connect(mapStateToProps)(ThumbnailsPanel);

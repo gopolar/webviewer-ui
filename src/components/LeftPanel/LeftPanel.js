@@ -96,7 +96,6 @@ class LeftPanel extends React.Component {
           />
         }
         <NotesPanel display={this.getDisplay('notesPanel')} />
-        <ThumbnailsPanel display={this.getDisplay('thumbnailsPanel')} />
         <OutlinesPanel display={this.getDisplay('outlinesPanel')} /> 
         {customPanels.map(({ panel }, index) => (
           <CustomElement

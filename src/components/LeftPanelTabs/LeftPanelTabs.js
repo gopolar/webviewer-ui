@@ -33,7 +33,6 @@ class LeftPanelTabs extends React.Component {
     const {
       customPanels,
       isLeftPanelTabsDisabled,
-      isThumbnailsPanelButtonDisabled,
       isOutlinesPanelButtonDisabled,
       isNotesPanelButtonDisabled,
       setActiveLeftPanel,
@@ -46,14 +45,6 @@ class LeftPanelTabs extends React.Component {
 
     return (
       <Element className="LeftPanelTabs" dataElement="leftPanelTabs">
-        <Tooltip content="component.thumbnailsPanel" isDisabled={isThumbnailsPanelButtonDisabled}>
-          <Button
-            isActive={this.isActive('thumbnailsPanel')}
-            dataElement="thumbnailsPanelButton"
-            img="ic_thumbnails_black_24px"
-            onClick={() => setActiveLeftPanel('thumbnailsPanel')}
-          />
-        </Tooltip>
         <Tooltip content="component.outlinesPanel" isDisabled={isOutlinesPanelButtonDisabled}>
           <Button
             isActive={this.isActive('outlinesPanel')}
@@ -90,7 +81,6 @@ const mapStateToProps = state => ({
   customPanels: selectors.getCustomPanels(state),
   disabledCustomPanelTabs: selectors.getDisabledCustomPanelTabs(state),
   isLeftPanelTabsDisabled: selectors.isElementDisabled(state, 'leftPanelTabs'),
-  isThumbnailsPanelButtonDisabled: selectors.isElementDisabled(state, 'thumbnailsPanelButton'),
   isOutlinesPanelButtonDisabled: selectors.isElementDisabled(state, 'outlinesPanelButton'),
   isNotesPanelButtonDisabled: selectors.isElementDisabled(state, 'notesPanelButton')
 });

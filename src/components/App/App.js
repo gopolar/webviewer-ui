@@ -17,6 +17,7 @@ import MeasurementOverlay from 'components/MeasurementOverlay';
 import DocumentContainer from 'components/DocumentContainer';
 import LeftPanel from 'components/LeftPanel';
 import SearchPanel from 'components/SearchPanel';
+import ThumbnailsPanel from 'components/ThumbnailsPanel';
 import AnnotationPopup from 'components/AnnotationPopup';
 import TextPopup from 'components/TextPopup';
 import ContextMenuPopup from 'components/ContextMenuPopup';
@@ -91,6 +92,7 @@ class App extends React.PureComponent {
 
           <LeftPanel />
           <SearchPanel />
+          <ThumbnailsPanel />
 
           <DocumentContainer />
 
